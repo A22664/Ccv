@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ar" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Royal Chess 3D — AAA Experience</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts for cinematic typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Cinematic Fog Overlay -->
+    <div class="fog-overlay"></div>
+
+    <!-- Dynamic Lighting Layer -->
+    <div class="lighting-layer"></div>
+
+    <!-- Main Menu Screen -->
+    <div id="main-menu" class="screen active">
+        <div class="menu-bg">
+            <div class="chess-pattern"></div>
+        </div>
+        <div class="menu-content">
+            <h1 class="game-title">
+                <span class="title-main">ROYAL</span>
+                <span class="title-sub">CHESS</span>
+                <span class="title-accent">3D</span>
+            </h1>
+            <p class="menu-subtitle">The Battle of Kings Begins</p>
+
+            <div class="menu-buttons">
+                <button class="menu-btn primary" onclick="showModeSelect()">
+                    <span class="btn-icon">⚔</span>
+                    <span class="btn-text">Play Game</span>
+                    <div class="btn-glow"></div>
+                </button>
+                <button class="menu-btn secondary" onclick="showSettings()">
+                    <span class="btn-icon">⚙</span>
+                    <span class="btn-text">Settings</span>
+                </button>
+                <button class="menu-btn secondary" onclick="showCredits()">
+                    <span class="btn-icon">♛</span>
+                    <span class="btn-text">Credits</span>
+                </button>
+            </div>
+        </div>
+        <div class="menu-particles"></div>
+    </div>
+
+    <!-- Mode Selection Screen -->
+    <div id="mode-select" class="screen">
+        <div class="screen-header">
+            <button class="back-btn" onclick="showMainMenu()">← Back</button>
+            <h2>Select Battle Mode</h2>
+        </div>
+        <div class="mode-cards">
+            <div class="mode-card" onclick="startGame('pvp')">
+                <div class="card-icon">👑👑</div>
+                <h3>Player vs Player</h3>
+                <p>Face your friend in an epic duel</p>
+                <div class="card-shine"></div>
+            </div>
+            <div class="mode-card" onclick="showDifficultySelect()">
+                <div class="card-icon">👑🤖</div>
+                <h3>Player vs AI</h3>
+                <p>Challenge the machine mind</p>
+                <div class="card-shine"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Difficulty Selection -->
+    <div id="difficulty-select" class="screen">
+        <div class="screen-header">
+            <button class="back-btn" onclick="showModeSelect()">← Back</button>
+            <h2>Choose Your Fate</h2>
+        </div>
+        <div class="difficulty-options">
+            <div class="diff-card" onclick="startGame('ai', 'easy')">
+                <div class="diff-badge bronze">I</div>
+                <h3>Squire</h3>
+                <p>Beginner — Learn the art of war</p>
+                <div class="diff-stars">★☆☆</div>
+            </div>
+            <div class="diff-card" onclick="startGame('ai', 'medium')">
+                <div class="diff-badge silver">II</div>
+                <h3>Knight</h3>
+                <p>Intermediate — Prove your skill</p>
+                <div class="diff-stars">★★☆</div>
+            </div>
+            <div class="diff-card" onclick="startGame('ai', 'hard')">
+                <div class="diff-badge gold">III</div>
+                <h3>Grandmaster</h3>
+                <p>Expert — Only the worthy survive</p>
+                <div class="diff-stars">★★★</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game-screen" class="screen">
+        <!-- Game HUD -->
+        <div class="game-hud">
+            <div class="hud-left">
+                <button class="hud-btn" onclick="returnToMenu()">🏠 Menu</button>
+                <button class="hud-btn" onclick="restartGame()">🔄 Restart</button>
+                <button class="hud-btn" onclick="toggleSound()">🔊 Sound</button>
+            </div>
+            <div class="hud-center">
+                <div class="turn-indicator">
+                    <span id="turn-text">White's Turn</span>
+                    <div class="turn-timer" id="timer">--:--</div>
+                </div>
+            </div>
+            <div class="hud-right">
+                <div class="captured-pieces" id="captured-white"></div>
+                <div class="score-display" id="score">0 - 0</div>
+                <div class="captured-pieces" id="captured-black"></div>
+            </div>
+        </div>
+
+        <!-- 3D Board Container -->
+        <div class="board-container">
+            <div class="board-wrapper" id="board-wrapper">
+                <div class="board-perspective">
+                    <div class="chess-board" id="chess-board">
+                        <!-- Squares generated by JS -->
+                    </div>
+                    <div class="board-shadow"></div>
+                    <div class="board-reflection"></div>
+                </div>
+            </div>
+
+            <!-- Move History Panel -->
+            <div class="side-panel">
+                <h4>Battle Log</h4>
+                <div class="move-history" id="move-history"></div>
+            </div>
+        </div>
+
+        <!-- Combat Animation Overlay -->
+        <div class="combat-overlay" id="combat-overlay">
+            <div class="combat-effect" id="combat-effect"></div>
+        </div>
+
+        <!-- Promotion Modal -->
+        <div class="modal" id="promotion-modal">
+            <div class="modal-content">
+                <h3>Choose Your Champion</h3>
+                <div class="promotion-options" id="promotion-options"></div>
+            </div>
+        </div>
+
+        <!-- Game Over Modal -->
+        <div class="modal" id="gameover-modal">
+            <div class="modal-content victory">
+                <h2 id="winner-text">Victory!</h2>
+                <p id="winner-sub">The king has fallen</p>
+                <div class="victory-effects">
+                    <div class="crown-animation">👑</div>
+                </div>
+                <button class="menu-btn primary" onclick="restartGame()">Play Again</button>
+                <button class="menu-btn secondary" onclick="returnToMenu()">Main Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Screen -->
+    <div id="settings-screen" class="screen">
+        <div class="screen-header">
+            <button class="back-btn" onclick="showMainMenu()">← Back</button>
+            <h2>Settings</h2>
+        </div>
+        <div class="settings-grid">
+            <div class="setting-item">
+                <label>Sound Effects</label>
+                <input type="range" min="0" max="100" value="70" id="sfx-volume">
+            </div>
+            <div class="setting-item">
+                <label>Animation Speed</label>
+                <input type="range" min="1" max="5" value="3" id="anim-speed">
+            </div>
+            <div class="setting-item">
+                <label>Board Theme</label>
+                <select id="board-theme">
+                    <option value="classic">Classic Wood</option>
+                    <option value="dark">Dark Obsidian</option>
+                    <option value="ice">Ice Crystal</option>
+                </select>
+            </div>
+            <div class="setting-item">
+                <label>Show Hints</label>
+                <input type="checkbox" checked id="show-hints">
+            </div>
+        </div>
+    </div>
+
+    <!-- Credits Screen -->
+    <div id="credits-screen" class="screen">
+        <div class="screen-header">
+            <button class="back-btn" onclick="showMainMenu()">← Back</button>
+            <h2>Credits</h2>
+        </div>
+        <div class="credits-content">
+            <div class="credit-item">
+                <span class="credit-role">Game Engine</span>
+                <span class="credit-name">Vanilla JavaScript 3D Renderer</span>
+            </div>
+            <div class="credit-item">
+                <span class="credit-role">AI System</span>
+                <span class="credit-name">Minimax with Alpha-Beta</span>
+            </div>
+            <div class="credit-item">
+                <span class="credit-role">Visual Design</span>
+                <span class="credit-name">CSS3 Pseudo-3D Engine</span>
+            </div>
+            <div class="credit-item">
+                <span class="credit-role">Audio</span>
+                <span class="credit-name">Web Audio API Synthesis</span>
+            </div>
+            <p class="credits-footer">Built for the Royal Battle ⚔</p>
+        </div>
+    </div>
+
+    <!-- Audio Elements (Web Audio API used in JS, these are fallback) -->
+    <div id="audio-container"></div>
+
+    <!-- Scripts -->
+    <script src="audio.js"></script>
+    <script src="animation.js"></script>
+    <script src="ai.js"></script>
+    <script src="engine.js"></script>
+</body>
+</html>
